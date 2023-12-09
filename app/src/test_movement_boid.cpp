@@ -22,6 +22,7 @@ void handle_robot(){
 int main(){ 
     std::cout << "Dimensioni dello schermo: " << boid::get_screen_width() << ", " << boid::get_screen_height() << "\n";
     std::cout << "Posiziione iniziale robot: " << my_robot.get_pos_x_() << ", " << my_robot.get_pos_y_() << "\n";
+    std::cout << "Velocità iniziale robot: " << my_robot.get_vel_x_() << ", " << my_robot.get_vel_y_() << "\n";
 
     thread robot_manager{handle_robot};
 

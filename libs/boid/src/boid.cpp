@@ -1,7 +1,6 @@
 #include "boid.h"
 #include<X11/Xlib.h>
 #include<random>
-#include<ctime>
 
 //initialize the static members
 const int boid::left_margin_ = (0);
@@ -33,14 +32,12 @@ boid::boid(int pos_x, int pos_y, int vel_x, int vel_y)
 }
 
 boid::boid()
+    :pos_x_{0}, pos_y_{0},vel_x_{0},vel_y_{0}
 {
     //il boid viene istanziato in un punto casuale e a vel casuale
-    pos_x_ = get_screen_width() / 2;
-    pos_y_ = get_screen_height() / 2;
-    vel_x_ = v_max_/2;
-    vel_y_ = v_max_/2;
+    initialize_at_random_positon();
+    initialize_at_random_velocity();
     return;
-
 }
 
 int boid::get_screen_height()
@@ -103,9 +100,30 @@ void boid::update_positon()
 
 void boid::initialize_at_random_positon()
 {
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_int_distribution<> distribution_1(0, get_screen_width());
+    std::uniform_int_distribution<> distribution_2(0, get_screen_height());
+
+    pos_x_ = distribution_1(generator);
+    pos_y_ = distribution_2(generator);
+
+
     return;
 }
 
+void boid::initialize_at_random_velocity()
+{
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_int_distribution<> distribution(-(v_max_ / std::sqrt(2)), (v_max_ / std::sqrt(2)));
+
+    vel_x_ = distribution(generator);
+    vel_y_ = distribution(generator);
+
+
+    return;
+}
 void boid::check_screen_margins()
 {
     if (pos_x_ < left_margin_)

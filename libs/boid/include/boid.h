@@ -24,6 +24,7 @@ private:
 
 // private member functions
     void initialize_at_random_positon();
+    void initialize_at_random_velocity();
     void check_screen_margins();
     
 
