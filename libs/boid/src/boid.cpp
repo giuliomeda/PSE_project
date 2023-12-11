@@ -5,8 +5,8 @@
 //initialize the static members
 const int boid::left_margin_ = (0);
 const int boid::right_margin_{boid::get_screen_width()};
-const int boid::top_margin_{0};
-const int boid::bottom_margin_{boid::get_screen_height()};
+const int boid::top_margin_{boid::get_screen_height()};
+const int boid::bottom_margin_{0};
 const int boid::v_min_{1};
 const int boid::v_max_{10};
 const int boid::d_sep_{10};
@@ -130,10 +130,10 @@ void boid::check_screen_margins()
         vel_x_ += turn_factor_;
     if (pos_x_ > right_margin_)
         vel_x_ -= turn_factor_;
-    if (pos_y_ > bottom_margin_)
-        vel_y_ -= turn_factor_;
-    if (pos_y_ < top_margin_)
+    if (pos_y_ < bottom_margin_)
         vel_y_ += turn_factor_;
+    if (pos_y_ > top_margin_)
+        vel_y_ -= turn_factor_;
     
     return;
 
