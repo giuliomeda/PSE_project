@@ -1,6 +1,4 @@
 #include "boid.h"
-#include<X11/Xlib.h>
-#include<random>
 
 //initialize the static members
 const int boid::left_margin_ = (0);
@@ -12,6 +10,7 @@ const int boid::v_max_{10};
 const int boid::d_sep_{10};
 const int boid::d_ca_{50};
 const int boid::turn_factor_{5};
+const std::string boid::filename{"../visualizer/my_coordinates.txt"};
 
 
 boid::boid(int pos_x, int pos_y, int vel_x, int vel_y)
@@ -94,6 +93,7 @@ void boid::update_positon()
     pos_y_ = pos_y_ + vel_y_;
 
     check_screen_margins();
+    write_last_position();
     return;
 
 }
@@ -108,7 +108,7 @@ void boid::initialize_at_random_positon()
     pos_x_ = distribution_1(generator);
     pos_y_ = distribution_2(generator);
 
-
+    //write position into the file
     return;
 }
 
@@ -139,3 +139,28 @@ void boid::check_screen_margins()
 
 }
 
+void boid::write_last_position()
+{
+    std::fstream myfile;
+    if (std::filesystem::exists(filename))
+        myfile.open(filename,std::ios::app); //open the file in appending mode
+        if(myfile.is_open()){
+            myfile << pos_x_ << " " << pos_y_ << "\n";
+            myfile.close();
+        }
+
+    else{ 
+        myfile.open(filename,std::ios::app);
+        if(myfile.is_open()){
+            myfile << left_margin_ << " " << right_margin_ << " " << bottom_margin_ << " " << top_margin_ << "\n";
+            myfile << pos_x_ << " " << pos_y_ << "\n";
+            myfile.close();
+        }
+        else{
+            std::cerr << "Unable to open the file, launch the program from the directory build and type './app/eseguibile' \n";
+            exit(EXIT_FAILURE);
+        }
+
+    }
+    return;
+}

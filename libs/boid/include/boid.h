@@ -1,6 +1,11 @@
 #ifndef BOID_H
 #define BOID_H
+#include<string>
+#include<X11/Xlib.h>
+#include<random>
+#include<fstream>
 #include<iostream>
+#include<filesystem>
 
 
 class boid
@@ -14,18 +19,20 @@ private:
     static const int v_min_;
     static const int v_max_;
     static const int turn_factor_;
+    static const std::string filename;
 
 
 //member
+    int pos_x_;
     int pos_y_;
     int vel_x_;
-    int pos_x_;
     int vel_y_;
 
 // private member functions
     void initialize_at_random_positon();
     void initialize_at_random_velocity();
     void check_screen_margins();
+    void write_last_position();
     
 
 
