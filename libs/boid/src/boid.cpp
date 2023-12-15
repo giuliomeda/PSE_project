@@ -124,6 +124,7 @@ void boid::initialize_at_random_velocity()
 
     return;
 }
+
 void boid::check_screen_margins()
 {
     if (pos_x_ < left_margin_)
@@ -163,4 +164,15 @@ void boid::write_last_position()
 
     }
     return;
+}
+
+bool boid::is_neighbor(const boid & other_boid)
+{
+    float distance_in_x {std::sqrt(std::pow((pos_x_ - other_boid.get_pos_x_()),2))};
+    float distance_in_y {std::sqrt(std::pow((pos_y_ - other_boid.get_pos_y_()),2))};
+
+    if (distance_in_x < boid::d_ca_ || distance_in_y < boid::d_ca_)
+        return true;
+    else return false;
+
 }

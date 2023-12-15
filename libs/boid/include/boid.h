@@ -6,7 +6,7 @@
 #include<fstream>
 #include<iostream>
 #include<filesystem>
-
+#include<cmath>
 
 class boid
 {
@@ -43,12 +43,13 @@ public:
     boid(int pos_x, int pos_y, int vel_x, int vel_y);
     boid();
 
-    int get_pos_x_(){return pos_x_;}
-    int get_pos_y_(){return pos_y_;}
-    int get_vel_x_(){return vel_x_;}
-    int get_vel_y_(){return vel_y_;}
+    int get_pos_x_() const {return pos_x_;}
+    int get_pos_y_() const {return pos_y_;}
+    int get_vel_x_() const {return vel_x_;}
+    int get_vel_y_() const {return vel_y_;}
 
     void update_positon();
+    bool is_neighbor(const boid& other_boid);
 
     //static function, indipendent of any object of the class
     static int get_screen_height();
