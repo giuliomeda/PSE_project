@@ -10,6 +10,9 @@ const int boid::v_max_{10};
 const int boid::d_sep_{10};
 const int boid::d_ca_{50};
 const int boid::turn_factor_{5};
+const int boid::avoid_factor{5};
+const int boid::centering_factor{5};
+const int boid::align_factor{5};
 const std::string boid::filename{"../visualizer/my_coordinates.txt"};
 
 
@@ -87,16 +90,6 @@ int boid::get_screen_width()
 
 }
 
-void boid::update_positon()
-{
-    pos_x_ = pos_x_ + vel_x_;
-    pos_y_ = pos_y_ + vel_y_;
-
-    check_screen_margins();
-    write_last_position();
-    return;
-
-}
 
 void boid::initialize_at_random_positon()
 {
@@ -166,13 +159,112 @@ void boid::write_last_position()
     return;
 }
 
-bool boid::is_neighbor(const boid & other_boid)
+float boid::distance_from_other_boid(const boid & other_boid)
 {
-    float distance_in_x {std::sqrt(std::pow((pos_x_ - other_boid.get_pos_x_()),2))};
-    float distance_in_y {std::sqrt(std::pow((pos_y_ - other_boid.get_pos_y_()),2))};
+    float distance_in_x {static_cast<float>(std::pow((pos_x_ - other_boid.get_pos_x_()),2))};
+    float distance_in_y {static_cast<float>(std::pow((pos_y_ - other_boid.get_pos_y_()),2))};
+    float distance = static_cast<float>(std::sqrt(distance_in_x + distance_in_y));
 
-    if (distance_in_x < boid::d_ca_ || distance_in_y < boid::d_ca_)
-        return true;
-    else return false;
+    return distance;
+
+}
+
+
+void boid::separation(const std::list<boid>& neighbors)
+{
+    int close_dx{0};
+    int close_dy{0};
+
+    for (const boid& el:neighbors){
+        if(distance_from_other_boid(el) < boid::d_sep_){
+            close_dx += pos_x_ - el.get_pos_x_();
+            close_dy += pos_y_ += el.get_pos_y_();
+        }
+    }
+
+    //update speed for separation
+    vel_x_ += close_dx * boid::avoid_factor;
+    vel_y_ += close_dy * boid::avoid_factor;
+
+    return;
+}
+
+void boid::alignement(const std::list<boid>& neighbors)
+{
+    float x_vel_avg{0};
+    float y_vel_avg{0};
+    int neighboring_boids{static_cast<int>(neighbors.size())};
+
+    for(const boid& el:neighbors){
+        x_vel_avg += el.get_vel_x_();
+        y_vel_avg += el.get_vel_y_();
+    }
+    if(neighboring_boids > 0){
+        x_vel_avg = x_vel_avg / neighboring_boids;
+        y_vel_avg = y_vel_avg / neighboring_boids;
+    }
+    else return;
+
+    //update speed
+    vel_x_ += (x_vel_avg - vel_x_) * boid::align_factor;
+    vel_y_ += (y_vel_avg - vel_y_) * boid::align_factor;
+
+    return;
+}
+
+void boid::cohesion(const std::list<boid>& neighbors)
+{
+    float x_pos_avg{0};
+    float y_pos_avg{0};
+    int neighboring_boids{static_cast<int>(neighbors.size())};
+
+    for(const boid& el:neighbors){
+        x_pos_avg += el.get_pos_x_();
+        y_pos_avg += el.get_pos_y_();
+    }
+    if(neighboring_boids > 0){
+        x_pos_avg = x_pos_avg / neighboring_boids;
+        y_pos_avg = y_pos_avg / neighboring_boids;
+    }
+    else return;
+
+    //update speed
+    vel_x_ += (x_pos_avg - pos_x_) * boid::centering_factor;
+    vel_y_ += (y_pos_avg - pos_y_) * boid::centering_factor;
+
+}
+
+void boid::speed_limits()
+{
+    float speed {static_cast<float>(std::sqrt(vel_x_ * vel_x_ + vel_y_ * vel_y_))};
+
+    if (speed > boid::v_max_){
+        vel_x_ = (vel_x_ / speed) * boid::v_max_;
+        vel_y_ = (vel_y_ / speed) * boid::v_max_;
+    }
+
+    if (speed < boid::v_max_){
+        vel_x_ = (vel_x_ / speed) * boid::v_min_;
+        vel_y_ = (vel_y_ / speed) * boid::v_min_;
+    }
+
+    return;
+
+}
+
+void boid::update_positon(const std::list<boid>& neighbors)
+{
+    this->separation(neighbors);
+    this->alignement(neighbors);
+    this->cohesion(neighbors);
+    this->speed_limits();
+    
+
+    pos_x_ = pos_x_ + vel_x_;
+    pos_y_ = pos_y_ + vel_y_;
+
+    check_screen_margins();
+
+    return;
 
 }
