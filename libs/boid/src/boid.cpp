@@ -13,7 +13,6 @@ const int boid::turn_factor_{5};
 const int boid::avoid_factor{5};
 const int boid::centering_factor{5};
 const int boid::align_factor{5};
-const std::string boid::filename{"../visualizer/my_coordinates.txt"};
 
 
 boid::boid(int pos_x, int pos_y, int vel_x, int vel_y)
@@ -133,7 +132,7 @@ void boid::check_screen_margins()
 
 }
 
-void boid::write_last_position()
+/*void boid::write_last_position()
 {
     std::fstream myfile;
     if (std::filesystem::exists(filename))
@@ -157,7 +156,7 @@ void boid::write_last_position()
 
     }
     return;
-}
+}*/
 
 float boid::distance_from_other_boid(const boid & other_boid)
 {
@@ -183,7 +182,7 @@ void boid::separation(const std::list<boid>& neighbors)
         if (distance_from_other_boid(el) < boid::d_sep_)
         {
             close_dx += pos_x_ - el.get_pos_x_();
-            close_dy += pos_y_ += el.get_pos_y_();
+            close_dy += pos_y_ - el.get_pos_y_();
         }
     }
 
