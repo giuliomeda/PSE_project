@@ -172,11 +172,16 @@ float boid::distance_from_other_boid(const boid & other_boid)
 
 void boid::separation(const std::list<boid>& neighbors)
 {
+    if(neighbors.empty()) //if there are no neighbors, return..
+        return;
+
     int close_dx{0};
     int close_dy{0};
 
-    for (const boid& el:neighbors){
-        if(distance_from_other_boid(el) < boid::d_sep_){
+    for (const boid &el : neighbors)
+    {
+        if (distance_from_other_boid(el) < boid::d_sep_)
+        {
             close_dx += pos_x_ - el.get_pos_x_();
             close_dy += pos_y_ += el.get_pos_y_();
         }
@@ -191,9 +196,14 @@ void boid::separation(const std::list<boid>& neighbors)
 
 void boid::alignement(const std::list<boid>& neighbors)
 {
+    if(neighbors.empty()) //if there are not neighbors, return..
+        return;
+    
     float x_vel_avg{0};
     float y_vel_avg{0};
     int neighboring_boids{static_cast<int>(neighbors.size())};
+
+    
 
     for(const boid& el:neighbors){
         x_vel_avg += el.get_vel_x_();
@@ -214,10 +224,15 @@ void boid::alignement(const std::list<boid>& neighbors)
 
 void boid::cohesion(const std::list<boid>& neighbors)
 {
+    if(neighbors.empty()) //if there are not neighbors, return..
+        return;
+    
     float x_pos_avg{0};
     float y_pos_avg{0};
     int neighboring_boids{static_cast<int>(neighbors.size())};
 
+    
+    
     for(const boid& el:neighbors){
         x_pos_avg += el.get_pos_x_();
         y_pos_avg += el.get_pos_y_();
@@ -236,14 +251,14 @@ void boid::cohesion(const std::list<boid>& neighbors)
 
 void boid::speed_limits()
 {
-    float speed {static_cast<float>(std::sqrt(vel_x_ * vel_x_ + vel_y_ * vel_y_))};
+    double speed {std::sqrt(vel_x_ * vel_x_ + vel_y_ * vel_y_)};
 
     if (speed > boid::v_max_){
         vel_x_ = (vel_x_ / speed) * boid::v_max_;
         vel_y_ = (vel_y_ / speed) * boid::v_max_;
     }
 
-    if (speed < boid::v_max_){
+    if (speed < boid::v_min_){
         vel_x_ = (vel_x_ / speed) * boid::v_min_;
         vel_y_ = (vel_y_ / speed) * boid::v_min_;
     }
@@ -254,10 +269,10 @@ void boid::speed_limits()
 
 void boid::update_positon(const std::list<boid>& neighbors)
 {
-    this->separation(neighbors);
-    this->alignement(neighbors);
-    this->cohesion(neighbors);
-    this->speed_limits();
+    separation(neighbors);
+    alignement(neighbors);
+    cohesion(neighbors);
+    speed_limits();
     
 
     pos_x_ = pos_x_ + vel_x_;
