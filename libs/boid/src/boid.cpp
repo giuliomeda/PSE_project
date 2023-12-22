@@ -5,14 +5,14 @@ const int boid::left_margin_ {0};
 const int boid::right_margin_{1920};
 const int boid::top_margin_{1080};
 const int boid::bottom_margin_{0};
-const int boid::v_min_{30};
-const int boid::v_max_{70};
-const int boid::d_sep_{10};
-const int boid::d_ca_{400};
-const int boid::turn_factor_{5};
-const int boid::avoid_factor{5};
-const int boid::centering_factor{5};
-const int boid::align_factor{5};
+const float boid::v_min_{10};
+const float boid::v_max_{100};
+const float boid::d_sep_{50};
+const float boid::d_ca_{500};
+const float boid::turn_factor_{10};
+const float boid::avoid_factor{5};
+const float boid::centering_factor{0.1};
+const float boid::align_factor{1};
 size_t boid::num_of_instantiated_boid{0};
 
 

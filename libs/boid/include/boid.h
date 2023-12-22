@@ -17,14 +17,14 @@ public:
     static const int bottom_margin_;
     static const int left_margin_;
     static const int right_margin_;
-    static const int d_sep_;
-    static const int d_ca_;
-    static const int v_min_;
-    static const int v_max_;
-    static const int turn_factor_;
-    static const int avoid_factor;
-    static const int centering_factor;
-    static const int align_factor;
+    static const float d_sep_;
+    static const float d_ca_;
+    static const float v_min_;
+    static const float v_max_;
+    static const float turn_factor_;
+    static const float avoid_factor;
+    static const float centering_factor;
+    static const float align_factor;
 
     static size_t num_of_instantiated_boid;
 
