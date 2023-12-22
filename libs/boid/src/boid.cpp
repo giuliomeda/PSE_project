@@ -5,10 +5,10 @@ const int boid::left_margin_ {0};
 const int boid::right_margin_{1920};
 const int boid::top_margin_{1080};
 const int boid::bottom_margin_{0};
-const int boid::v_min_{10};
-const int boid::v_max_{50};
+const int boid::v_min_{30};
+const int boid::v_max_{70};
 const int boid::d_sep_{10};
-const int boid::d_ca_{200};
+const int boid::d_ca_{400};
 const int boid::turn_factor_{5};
 const int boid::avoid_factor{5};
 const int boid::centering_factor{5};
@@ -107,7 +107,6 @@ void boid::initialize_at_random_positon()
     pos_x_ = distribution_1(generator);
     pos_y_ = distribution_2(generator);
 
-    //write position into the file
     return;
 }
 
