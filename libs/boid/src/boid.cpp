@@ -1,21 +1,22 @@
 #include "boid.h"
 
 //initialize the static members
-const int boid::left_margin_ = (0);
-const int boid::right_margin_{boid::get_screen_width()};
-const int boid::top_margin_{boid::get_screen_height()};
+const int boid::left_margin_ {0};
+const int boid::right_margin_{1920};
+const int boid::top_margin_{1080};
 const int boid::bottom_margin_{0};
-const int boid::v_min_{1};
-const int boid::v_max_{10};
+const int boid::v_min_{10};
+const int boid::v_max_{50};
 const int boid::d_sep_{10};
-const int boid::d_ca_{50};
+const int boid::d_ca_{200};
 const int boid::turn_factor_{5};
 const int boid::avoid_factor{5};
 const int boid::centering_factor{5};
 const int boid::align_factor{5};
+size_t boid::num_of_instantiated_boid{0};
 
 
-boid::boid(int pos_x, int pos_y, int vel_x, int vel_y)
+boid::boid(float pos_x, float pos_y, float vel_x, float vel_y)
     : pos_x_{pos_x}, pos_y_{pos_y}, vel_x_{vel_x}, vel_y_{vel_y}
 {
     //check initial position given by the user
@@ -23,10 +24,14 @@ boid::boid(int pos_x, int pos_y, int vel_x, int vel_y)
         pos_x_ = right_margin_;
     if(pos_x < left_margin_)
         pos_x_ = left_margin_;
-    if(pos_y > bottom_margin_)
+    if(pos_y < bottom_margin_)
         pos_y_ = bottom_margin_;
-    if(pos_y < top_margin_)
+    if(pos_y > top_margin_)
         pos_y_ = top_margin_;
+
+    //assign the boid id
+    boid_id_ = num_of_instantiated_boid;
+    num_of_instantiated_boid++;
  
     return;
     
@@ -38,6 +43,9 @@ boid::boid()
     //il boid viene istanziato in un punto casuale e a vel casuale
     initialize_at_random_positon();
     initialize_at_random_velocity();
+    //assign the boid id
+    boid_id_ = num_of_instantiated_boid;
+    num_of_instantiated_boid++;
     return;
 }
 
@@ -89,13 +97,12 @@ int boid::get_screen_width()
 
 }
 
-
 void boid::initialize_at_random_positon()
 {
     std::random_device rd;
     std::mt19937 generator(rd());
-    std::uniform_int_distribution<> distribution_1(0, get_screen_width());
-    std::uniform_int_distribution<> distribution_2(0, get_screen_height());
+    std::uniform_int_distribution<> distribution_1(0, right_margin_);
+    std::uniform_int_distribution<> distribution_2(0, top_margin_);
 
     pos_x_ = distribution_1(generator);
     pos_y_ = distribution_2(generator);
@@ -132,50 +139,23 @@ void boid::check_screen_margins()
 
 }
 
-/*void boid::write_last_position()
+float boid::distance_from_other_boid(const boid& other_boid)
 {
-    std::fstream myfile;
-    if (std::filesystem::exists(filename))
-        myfile.open(filename,std::ios::app); //open the file in appending mode
-        if(myfile.is_open()){
-            myfile << pos_x_ << " " << pos_y_ << "\n";
-            myfile.close();
-        }
+    double distance_in_x {std::pow((pos_x_ - other_boid.get_pos_x_()),2)};
+    double distance_in_y {std::pow((pos_y_ - other_boid.get_pos_y_()),2)};
+    double distance = std::sqrt(distance_in_x + distance_in_y);
 
-    else{ 
-        myfile.open(filename,std::ios::app);
-        if(myfile.is_open()){
-            myfile << left_margin_ << " " << right_margin_ << " " << bottom_margin_ << " " << top_margin_ << "\n";
-            myfile << pos_x_ << " " << pos_y_ << "\n";
-            myfile.close();
-        }
-        else{
-            std::cerr << "Unable to open the file, launch the program from the directory build and type './app/eseguibile' \n";
-            exit(EXIT_FAILURE);
-        }
-
-    }
-    return;
-}*/
-
-float boid::distance_from_other_boid(const boid & other_boid)
-{
-    float distance_in_x {static_cast<float>(std::pow((pos_x_ - other_boid.get_pos_x_()),2))};
-    float distance_in_y {static_cast<float>(std::pow((pos_y_ - other_boid.get_pos_y_()),2))};
-    float distance = static_cast<float>(std::sqrt(distance_in_x + distance_in_y));
-
-    return distance;
+    return static_cast<float> (distance);
 
 }
-
 
 void boid::separation(const std::list<boid>& neighbors)
 {
     if(neighbors.empty()) //if there are no neighbors, return..
         return;
 
-    int close_dx{0};
-    int close_dy{0};
+    float close_dx{0};
+    float close_dy{0};
 
     for (const boid &el : neighbors)
     {
@@ -272,12 +252,12 @@ void boid::update_positon(const std::list<boid>& neighbors)
     alignement(neighbors);
     cohesion(neighbors);
     speed_limits();
-    
+    check_screen_margins();
 
     pos_x_ = pos_x_ + vel_x_;
     pos_y_ = pos_y_ + vel_y_;
 
-    check_screen_margins();
+    
 
     return;
 

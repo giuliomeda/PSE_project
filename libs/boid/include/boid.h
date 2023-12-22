@@ -26,21 +26,23 @@ public:
     static const int centering_factor;
     static const int align_factor;
 
+    static size_t num_of_instantiated_boid;
 
-    static const std::string filename;
+
+    //static const std::string filename;
 
 private:
 //member
-    int pos_x_;
-    int pos_y_;
-    int vel_x_;
-    int vel_y_;
+    float pos_x_;
+    float pos_y_;
+    float vel_x_;
+    float vel_y_;
+    size_t boid_id_;
 
 // private member functions
     void initialize_at_random_positon();
     void initialize_at_random_velocity();
     void check_screen_margins();
-    void write_last_position();
     void separation(const std::list<boid>& neighbors);
     void alignement(const std::list<boid>& neighbors);
     void cohesion(const std::list<boid>& neighbors);
@@ -50,14 +52,14 @@ private:
 
 public:
     
-    
-    boid(int pos_x, int pos_y, int vel_x, int vel_y);
+    boid(float pos_x, float pos_y, float vel_x, float vel_y);
     boid();
 
     int get_pos_x_() const {return pos_x_;}
     int get_pos_y_() const {return pos_y_;}
     int get_vel_x_() const {return vel_x_;}
     int get_vel_y_() const {return vel_y_;}
+    size_t get_boid_id_() const {return boid_id_;}
 
     void update_positon(const std::list<boid>& neighbors);
     float distance_from_other_boid(const boid& other_boid);
