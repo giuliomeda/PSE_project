@@ -8,8 +8,10 @@ using std::vector;
 using std::thread;
 using std::list;
 
+#include<Python.h>
 
-boids_manager manager{"../visualizer/my_coordinates.txt",10};
+
+boids_manager manager{"../visualizer/my_coordinates.txt",100};
 
 void handle_robot(int index_of_boid){
     int number_update{0};
@@ -44,6 +46,22 @@ void writer(){
     return;
 }
 
+void launch_visualizer(){
+    //launch the visualizer
+
+	Py_Initialize();
+
+	PyObject *obj = Py_BuildValue("s", "../visualizer/Visualizer.py");
+    FILE *file = _Py_fopen_obj(obj, "r+");
+    if(file != NULL) {
+        PyRun_SimpleFile(file, "../visualizer/Visualizer.py");
+    }
+
+	Py_Finalize();
+
+    return;
+}
+
 
 int main(){
 
@@ -63,6 +81,10 @@ int main(){
 
     file_writer.join();
 
+
+    //launch Visualizer.py
+    launch_visualizer();
+    
     return 0;    
 
 }
