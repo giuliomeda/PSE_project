@@ -13,11 +13,11 @@ using std::list;
 
 boids_manager manager{"../visualizer/my_coordinates.txt",100};
 
-void handle_robot(int index_of_boid){
+void handle_robot(int index_of_boid,int no_of_iteratation){
     int number_update{0};
     std::list<boid> neighbors{};
 
-    while (number_update < 1000){
+    while (number_update < no_of_iteratation){
 
         //update list of neighbors, only if there're neighbors
         /*if(!neighbors.empty())
@@ -37,9 +37,9 @@ void handle_robot(int index_of_boid){
     return;
 }
 
-void writer(){
+void writer(int no_of_iteratation){
     int i{0};
-    while(i < 1000){ 
+    while(i < no_of_iteratation){ 
         manager.write_positions();
         i++;
     }
@@ -64,16 +64,17 @@ void launch_visualizer(){
 
 
 int main(){
+    //insert the number of iteration that you want to compute
+    const int no_of_iteratation{1000};
 
-    
     vector<thread> threads;
     for (size_t i{0}; i < manager.get_storm_size(); i++){
 
-        threads.push_back(thread{handle_robot,static_cast<int>(i)});
+        threads.push_back(thread{handle_robot,static_cast<int>(i), no_of_iteratation});
 
     }
     
-    thread file_writer{writer};
+    thread file_writer{writer,no_of_iteratation};
 
     for (auto el{threads.begin()}; el != threads.end(); el++){
         el->join();
