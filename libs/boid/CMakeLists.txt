@@ -7,6 +7,5 @@ add_library(boid STATIC src/boid.cpp
                         src/boids_manager.cpp)
 
 target_include_directories(boid PUBLIC include)
-target_link_libraries(boid PRIVATE X11)
 
 add_library(PSE::boid ALIAS boid)

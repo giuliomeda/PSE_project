@@ -1,7 +1,6 @@
 #ifndef BOID_H
 #define BOID_H
 #include<string>
-#include<X11/Xlib.h>
 #include<random>
 #include<fstream>
 #include<iostream>
@@ -41,7 +40,7 @@ private:
 
 // private member functions
     void initialize_at_random_positon();
-    void initialize_at_random_velocity();
+    void initialize_at_random_speed();
     void check_screen_margins();
     void separation(const std::list<boid>& neighbors);
     void alignement(const std::list<boid>& neighbors);
@@ -63,10 +62,6 @@ public:
 
     void update_positon(const std::list<boid>& neighbors);
     float distance_from_other_boid(const boid& other_boid);
-
-    //static function, indipendent of any object of the class
-    static int get_screen_height();
-    static int get_screen_width();
 
 };
 

@@ -34,11 +34,7 @@ In caso di errori durante la compilazione :
 ```bash
 sudo apt-get install python3.10-dev
 ```
-### <X11/Xlib.h>
-Necessita della libreria <X11/Xlib.h> per l'acquisizione della risoluzione dello schermo.
-```bash
-sudo apt-get install libx11-dev
-```
+
 
 ## DOCUMENTAZIONE 
 TODO

@@ -42,59 +42,11 @@ boid::boid()
 {
     //il boid viene istanziato in un punto casuale e a vel casuale
     initialize_at_random_positon();
-    initialize_at_random_velocity();
+    initialize_at_random_speed();
     //assign the boid id
     boid_id_ = num_of_instantiated_boid;
     num_of_instantiated_boid++;
     return;
-}
-
-int boid::get_screen_height()
-{
-    Display* display = XOpenDisplay(nullptr);
-    if (!display) {
-        std::cerr << "Unable to open display.\n";
-        return 1;
-    }
-
-    Screen* screen = DefaultScreenOfDisplay(display);
-    if (!screen) {
-        std::cerr << "Unable to obtain screen information.\n";
-        XCloseDisplay(display);
-        return 1;
-    }
-
-    // Extract screen dimensions
-    int screenWidth = WidthOfScreen(screen);
-    int screenHeight = HeightOfScreen(screen);
-
-    XCloseDisplay(display);
-    return screenHeight;
-
-}
-
-int boid::get_screen_width()
-{
-    Display* display = XOpenDisplay(nullptr);
-    if (!display) {
-        std::cerr << "Unable to open display.\n";
-        return 1;
-    }
-
-    Screen* screen = DefaultScreenOfDisplay(display);
-    if (!screen) {
-        std::cerr << "Unable to obtain screen information.\n";
-        XCloseDisplay(display);
-        return 1;
-    }
-
-    // Extract screen dimensions
-    int screenWidth = WidthOfScreen(screen);
-
-    XCloseDisplay(display);
-
-    return screenWidth;
-
 }
 
 void boid::initialize_at_random_positon()
@@ -110,7 +62,7 @@ void boid::initialize_at_random_positon()
     return;
 }
 
-void boid::initialize_at_random_velocity()
+void boid::initialize_at_random_speed()
 {
     std::random_device rd;
     std::mt19937 generator(rd());
