@@ -19,11 +19,14 @@ private:
     std::condition_variable new_update;
 
 public:
-    boids_manager(std::string filename, size_t storm_size);
+    boids_manager(const std::string& filename, size_t storm_size);
     void write_positions();
+    void reynolds_algorithm(const std::list<boid>& neighbors, int index_of_boid);
+
+    void initialize_output_file(const std::string& filename);
+    void initialize_storm(size_t storm_size);
     void update_list_of_neighbors(std::list<boid>& neighbors, int index_of_boid);
     void check_for_new_neighbors(std::list<boid>& neighbors, int index_of_boid);
-    void reynolds_algorithm(const std::list<boid>& neighbors, int index_of_boid);
     int get_storm_size() const {return my_storm_.size();}
 };
 

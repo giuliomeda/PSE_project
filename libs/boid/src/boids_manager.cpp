@@ -3,25 +3,36 @@
 #include<filesystem>
 #include<fstream>
 
-boids_manager::boids_manager(std::string filename, size_t storm_size)
+boids_manager::boids_manager(const std::string& filename, size_t storm_size)
     :filename_{filename}
 {
+    //initialize the storm 
+    initialize_storm(storm_size);
+    //initialize output file
+    initialize_output_file(filename);
 
-    if (storm_size == 0 ){
-        std::cerr << "Invalid storm size...\n\n";
-        exit(EXIT_FAILURE);
-    }
+    return;
+}
 
-    for(size_t i{0}; i < storm_size; i++){
-        //populate the storm with random boid
-        boid new_boid{};
-        my_storm_.push_back(new_boid);
-        no_of_new_positions_to_write_.push_back(false);
-    }
-
-    std::fstream myfile;
+void boids_manager::initialize_output_file(const std::string & filename)
+{
+    std::ofstream myfile;
     if(!std::filesystem::exists(filename)){
-        myfile.open(filename,std::ios::app);
+        myfile.open(filename, std::ios::app);
+
+        if(myfile.is_open()){
+                myfile << boid::left_margin_ << " " << boid::right_margin_ << " " << boid::bottom_margin_ << " " << boid::top_margin_ << "\n";
+                myfile.close();
+            }
+            else{
+                std::cerr << "Unable to open the file, launch the program from the directory build and type './app/eseguibile' \n";
+                exit(EXIT_FAILURE);
+            }
+    }
+
+    //if the file already exist, clear it
+    else{
+        myfile.open(filename, std::ios::trunc);
 
         if(myfile.is_open()){
                 myfile << boid::left_margin_ << " " << boid::right_margin_ << " " << boid::bottom_margin_ << " " << boid::top_margin_ << "\n";
@@ -34,12 +45,30 @@ boids_manager::boids_manager(std::string filename, size_t storm_size)
     }
 
     return;
+
+}
+
+void boids_manager::initialize_storm(size_t storm_size)
+{
+    if (storm_size == 0 ){
+        std::cerr << "Invalid storm size...\n\n";
+        exit(EXIT_FAILURE);
+    }
+
+    for(size_t i{0}; i < storm_size; i++){
+        //populate the storm with random boid
+        boid new_boid{};
+        my_storm_.push_back(new_boid);
+        no_of_new_positions_to_write_.push_back(false);
+    }
+
+    return;
 }
 
 void boids_manager::write_positions()
 {
     std::unique_lock<std::mutex> mlock(mutex_);
-    std::fstream my_file;
+    std::ofstream my_file;
 
     while (!std::all_of(no_of_new_positions_to_write_.begin(), no_of_new_positions_to_write_.end(), [](int a)
                         { return a; }))
@@ -58,6 +87,10 @@ void boids_manager::write_positions()
         for (auto el {no_of_new_positions_to_write_.begin()}; el != no_of_new_positions_to_write_.end(); el ++){
             (*el) = false;
         }
+    }
+    else{
+        std::cerr << "Error occurred while opening the output file\n";
+        exit(EXIT_FAILURE);
     }
 
     mlock.unlock();
