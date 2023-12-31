@@ -28,12 +28,6 @@ Una volta terminata la compilazione puoi avviare l'applicazione tramite
 ```
 
 ## Dipendenze per la compilazione 
-### <Python.h>
-Necessita della libreria <Python.h> che permette di avviare lo script python del visualizer direttamente lanciando l'applicazione principale.
-In caso di errori durante la compilazione :
-```bash
-sudo apt-get install python3.10-dev
-```
 
 
 ## DOCUMENTAZIONE 
