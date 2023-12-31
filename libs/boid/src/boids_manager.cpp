@@ -3,6 +3,13 @@
 #include<filesystem>
 #include<fstream>
 
+boids_manager::boids_manager(const std::string& filename)
+    :filename_{filename}
+{
+    initialize_output_file(filename_);
+    return;
+}
+
 boids_manager::boids_manager(const std::string& filename, size_t storm_size)
     :filename_{filename}
 {

@@ -4,14 +4,14 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include<stdlib.h>
 using std::vector;
 using std::thread;
 using std::list;
 
-#include<Python.h>
 
 
-boids_manager manager{"../visualizer/my_coordinates.txt",100};
+boids_manager manager{"../visualizer/my_coordinates.txt"};
 
 void handle_robot(int index_of_boid,int no_of_iteratation){
     int number_update{0};
@@ -46,26 +46,35 @@ void writer(int no_of_iteratation){
     return;
 }
 
-void launch_visualizer(){
-    //launch the visualizer
-
-	Py_Initialize();
-
-	PyObject *obj = Py_BuildValue("s", "../visualizer/Visualizer.py");
-    FILE *file = _Py_fopen_obj(obj, "r+");
-    if(file != NULL) {
-        PyRun_SimpleFile(file, "../visualizer/Visualizer.py");
-    }
-
-	Py_Finalize();
-
-    return;
-}
 
 
 int main(){
     //insert the number of iteration that you want to compute
-    const int no_of_iteratation{1000};
+    int no_of_iteratation;
+    int no_of_boids;
+
+    std::cout << "Insert the number of boid you want to instantiate: ";
+    std::cin >> no_of_boids;
+    if(no_of_boids <= 0 ){
+        std::cerr << "Num of bois must be > 0\n";
+        std::cerr << "exit...\n";
+        exit(EXIT_FAILURE);
+    }
+
+
+    std::cout << "\nInsert no of iteration that you want to compute: ";
+    std::cin >> no_of_iteratation;
+    if(no_of_iteratation <= 0){
+        std::cerr << "Num of iteration must be > 0\n";
+        std::cerr << "exit...\n";
+        exit(EXIT_FAILURE);
+    }
+    if(no_of_boids < 200){
+        std::cout << "\nFor a better graphic result number of iteration should be > 200 \n";
+    }
+    
+
+    manager.initialize_storm(static_cast<size_t>(no_of_boids));
 
     vector<thread> threads;
     for (size_t i{0}; i < manager.get_storm_size(); i++){
@@ -82,10 +91,9 @@ int main(){
 
     file_writer.join();
 
-
     //launch Visualizer.py
-    launch_visualizer();
-    
+    system("python3 ../visualizer/Visualizer.py");
+
     return 0;    
 
 }

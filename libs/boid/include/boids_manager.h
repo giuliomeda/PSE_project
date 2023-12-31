@@ -19,6 +19,7 @@ private:
     std::condition_variable new_update;
 
 public:
+    boids_manager(const std::string& filename);
     boids_manager(const std::string& filename, size_t storm_size);
     void write_positions();
     void reynolds_algorithm(const std::list<boid>& neighbors, int index_of_boid);
