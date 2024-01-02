@@ -53,8 +53,8 @@ void boid::initialize_at_random_positon()
 {
     std::random_device rd;
     std::mt19937 generator(rd());
-    std::uniform_int_distribution<> distribution_1(0, right_margin_);
-    std::uniform_int_distribution<> distribution_2(0, top_margin_);
+    std::uniform_real_distribution<> distribution_1(0, right_margin_);
+    std::uniform_real_distribution<> distribution_2(0, top_margin_);
 
     pos_x_ = distribution_1(generator);
     pos_y_ = distribution_2(generator);
@@ -66,7 +66,7 @@ void boid::initialize_at_random_speed()
 {
     std::random_device rd;
     std::mt19937 generator(rd());
-    std::uniform_int_distribution<> distribution(-(v_max_ / std::sqrt(2)), (v_max_ / std::sqrt(2)));
+    std::uniform_real_distribution distribution(-(v_max_ / std::sqrt(2)), (v_max_ / std::sqrt(2)));
 
     vel_x_ = distribution(generator);
     vel_y_ = distribution(generator);

@@ -54,10 +54,10 @@ public:
     boid(float pos_x, float pos_y, float vel_x, float vel_y);
     boid();
 
-    int get_pos_x_() const {return pos_x_;}
-    int get_pos_y_() const {return pos_y_;}
-    int get_vel_x_() const {return vel_x_;}
-    int get_vel_y_() const {return vel_y_;}
+    float get_pos_x_() const {return pos_x_;}
+    float get_pos_y_() const {return pos_y_;}
+    float get_vel_x_() const {return vel_x_;}
+    float get_vel_y_() const {return vel_y_;}
     size_t get_boid_id_() const {return boid_id_;}
 
     void update_speed(const std::list<boid>& neighbors);
