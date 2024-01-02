@@ -81,6 +81,11 @@ void boids_manager::write_positions()
                         { return a; }))
         OkToWrite.wait(mlock);
 
+    //update positions using updated speeds
+    for (auto& el:my_storm_){
+        el.update_position();
+    }
+
     my_file.open(filename_, std::ios::app); // open the file in appending mode
     if (my_file.is_open())
     {
@@ -135,7 +140,7 @@ void boids_manager::reynolds_algorithm(const std::list<boid>& neighbors, int ind
     while (no_of_new_positions_to_write_.at(index_of_boid))
         new_update.wait(mlock);
     
-    my_storm_.at(index_of_boid).update_positon(neighbors);
+    my_storm_.at(index_of_boid).update_speed(neighbors);
 
     no_of_new_positions_to_write_.at(index_of_boid) = true;
 

@@ -60,7 +60,8 @@ public:
     int get_vel_y_() const {return vel_y_;}
     size_t get_boid_id_() const {return boid_id_;}
 
-    void update_positon(const std::list<boid>& neighbors);
+    void update_speed(const std::list<boid>& neighbors);
+    void update_position();
     float distance_from_other_boid(const boid& other_boid);
 
 };

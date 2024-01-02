@@ -197,7 +197,7 @@ void boid::speed_limits()
 
 }
 
-void boid::update_positon(const std::list<boid>& neighbors)
+void boid::update_speed(const std::list<boid>& neighbors)
 {
     separation(neighbors);
     alignement(neighbors);
@@ -205,11 +205,12 @@ void boid::update_positon(const std::list<boid>& neighbors)
     speed_limits();
     check_screen_margins();
 
+    return;
+}
+
+void boid::update_position()
+{
     pos_x_ = pos_x_ + vel_x_;
     pos_y_ = pos_y_ + vel_y_;
-
-    
-
     return;
-
 }
