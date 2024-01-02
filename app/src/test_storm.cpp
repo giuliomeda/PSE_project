@@ -69,7 +69,7 @@ int main(){
         std::cerr << "exit...\n";
         exit(EXIT_FAILURE);
     }
-    if(no_of_boids < 200){
+    if(no_of_iteratation < 200){
         std::cout << "\nFor a better graphic result number of iteration should be > 200 \n";
     }
     
