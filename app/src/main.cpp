@@ -5,6 +5,8 @@
 #include <vector>
 #include <list>
 #include<stdlib.h>
+#include<chrono>
+#include<atomic>
 using std::vector;
 using std::thread;
 using std::list;
@@ -12,6 +14,7 @@ using std::list;
 
 
 boids_manager manager{"../visualizer/my_coordinates.txt"};
+std::atomic<bool> continueToWrite{true};
 
 void handle_robot(int index_of_boid,int no_of_iteratation){
     int number_update{0};
@@ -31,16 +34,20 @@ void handle_robot(int index_of_boid,int no_of_iteratation){
 
         number_update ++;
     }
-
+    continueToWrite = false;
     return;
 }
 
 void writer(int no_of_iteratation){
-    int i{0};
-    while(i < no_of_iteratation){ 
+
+    while (continueToWrite)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds{1});
         manager.write_positions();
-        i++;
+ 
     }
+    
+    
     return;
 }
 

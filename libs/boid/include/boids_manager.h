@@ -13,10 +13,11 @@ class boids_manager
 private:
     std::vector<boid> my_storm_;
     std::vector<bool> no_of_new_positions_to_write_;
+    bool activeWriter{false};
     std::string filename_;
     std::mutex mutex_;
     std::condition_variable OkToWrite;
-    std::condition_variable new_update;
+    std::condition_variable noActiveWriter;
 
 public:
     boids_manager(const std::string& filename);
