@@ -14,13 +14,13 @@ using std::list;
 
 
 boids_manager manager{"../visualizer/my_coordinates.txt"};
-std::atomic<bool> continueToWrite{true};
+std::atomic<bool> anyoneHasFinish{false};
 
 void handle_robot(int index_of_boid,int no_of_iteratation){
     int number_update{0};
     std::list<boid> neighbors{};
 
-    while (number_update < no_of_iteratation){
+    while (number_update < no_of_iteratation && !anyoneHasFinish){
 
         //update list of neighbors, only if there're neighbors
         /*if(!neighbors.empty())
@@ -34,17 +34,15 @@ void handle_robot(int index_of_boid,int no_of_iteratation){
 
         number_update ++;
     }
-    continueToWrite = false;
+    anyoneHasFinish = true;
     return;
 }
 
 void writer(int no_of_iteratation){
 
-    while (continueToWrite)
+    while (!anyoneHasFinish)
     {
-        std::this_thread::sleep_for(std::chrono::microseconds{1});
-        manager.write_positions();
- 
+        manager.write_positions(); 
     }
     
     

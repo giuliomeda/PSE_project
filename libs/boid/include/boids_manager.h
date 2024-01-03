@@ -13,9 +13,10 @@ class boids_manager
 {
 private:
     std::vector<boid> my_storm_;
-    std::atomic<int> num_of_position_updater_active{0};
+    std::vector<int> no_of_new_positions_to_write;
     bool activeWriter{false};
     std::string filename_;
+    static const int max_num_of_loss_positions{3};
     std::mutex mutex_;
     std::condition_variable OkToWrite;
     std::condition_variable noActiveWriter;

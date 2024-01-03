@@ -66,6 +66,7 @@ void boids_manager::initialize_storm(size_t storm_size)
         //populate the storm with random boid
         boid new_boid{};
         my_storm_.push_back(new_boid);
+        no_of_new_positions_to_write.push_back(0);
     }
 
     return;
@@ -76,13 +77,10 @@ void boids_manager::write_positions()
     std::unique_lock<std::mutex> mlock(mutex_);
     std::ofstream my_file;
 
-    /*while (!std::all_of(no_of_new_positions_to_write_.begin(), no_of_new_positions_to_write_.end(), [](int a)
-                        { return a; }))
-        OkToWrite.wait(mlock);*/
-    activeWriter = true;
-    while (num_of_position_updater_active > 0)
+    while (!std::all_of(no_of_new_positions_to_write.begin(), no_of_new_positions_to_write.end(), [](int a)
+                        { return a > 0; }))
         OkToWrite.wait(mlock);
-
+    activeWriter = true;
     my_file.open(filename_, std::ios::app); // open the file in appending mode
     if (my_file.is_open())
     {
@@ -97,6 +95,9 @@ void boids_manager::write_positions()
         std::cerr << "Error occurred while opening the output file\n";
         exit(EXIT_FAILURE);
     }
+    //reset no_of_position_to_write
+    for(auto& el:no_of_new_positions_to_write)
+        el = 0;
 
     mlock.unlock();
     activeWriter = false;
@@ -131,18 +132,17 @@ void boids_manager::reynolds_algorithm(const std::list<boid>& neighbors, int ind
 {
 
     std::unique_lock<std::mutex> mlock(mutex_);
-    while (activeWriter)
+    while (activeWriter || (no_of_new_positions_to_write.at(index_of_boid) >= max_num_of_loss_positions))
         noActiveWriter.wait(mlock);
 
-    num_of_position_updater_active++;
     my_storm_.at(index_of_boid).update_speed(neighbors);
     my_storm_.at(index_of_boid).update_position();
+    no_of_new_positions_to_write.at(index_of_boid)++;
 
-    num_of_position_updater_active--;
-  
-    if(num_of_position_updater_active == 0)
+    if(std::all_of(no_of_new_positions_to_write.cbegin(), no_of_new_positions_to_write.cend(),[](int a ){return a>0;}))
         OkToWrite.notify_one();
     mlock.unlock();
+    
         
 
     return;
