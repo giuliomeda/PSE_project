@@ -4,6 +4,7 @@
 #include<condition_variable>
 #include<mutex>
 #include<string>
+#include<atomic>
 #include "boid.h"
 
 
@@ -12,7 +13,7 @@ class boids_manager
 {
 private:
     std::vector<boid> my_storm_;
-    std::vector<bool> no_of_new_positions_to_write_;
+    std::atomic<int> num_of_position_updater_active{0};
     bool activeWriter{false};
     std::string filename_;
     std::mutex mutex_;
