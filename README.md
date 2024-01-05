@@ -17,16 +17,7 @@ git clone https://github.com/giuliomeda/homework_PSE_23-24.git
 ```bash
 mkdir build 
 ```
-3. SCEGLIERE LA VERSIONE DEL PROGRAMMA DA COMPILARE:
-all'interno del branch main è implementata una versione in cui la thread di scrittura scrive su file quando tutti i boid hanno aggiornato una volta la loro posizione e ogni boid prima di aggiornare ulteriormente la propria posizione deve aspettare che avvenga la scrittura su file. Non vi sono quindi perdite di posizioni.
-All'interno del branch versionB invece è implementata une versione in cui la thread che si occupa della scrittura scrive su file quando tutti i boid hanno aggiornato la propria posizione ALMENO una volta rispetto all'ultima posizione scritta. Ogni boid può continuare ad aggiornare la propria posizione indipendentemente dal fatto che avvenga o meno la scrittura su file. Vi possono quindi essere delle perdite di aggiornamenti delle posizioni.
-```bash
- git checkout main
-```
-oppure
-```bash
- git checkout versionB
-```
+
 4. Compila con CMAKE:
 ```bash
  cd build/
@@ -80,3 +71,22 @@ Se versione 2, passare a wsl, dal terminale linux:
 `$ sudo apt install python3-pip`
 
 (The package installer for Python)
+
+## Versione B 
+All'interno del branch "versionB" è implementata una variante della parte concorrente del programma. 
+
+Nel BRANCH MAIN è implementata una versione in cui la thread di scrittura scrive su file quando tutti i boid hanno aggiornato esattamente una sola volta la loro posizione. Ogni boid quando ha aggiornato la posizione si blocca e aspetta che avvenga la scrittura; una volta terminata la fase di scrittura i boid vengono svegliati e possono procedere con un nuovo aggiornamento. Così facendo non si perde alcuna posizione e tutti i boid vengono aggiornati lo stesso numero di volte.
+
+All'interno del branch versionB invece è implementata une versione in cui la thread che si occupa della scrittura scrive su file quando tutti i boid hanno aggiornato la propria posizione ALMENO una volta rispetto all'ultima posizione scritta. Gli aggiornamenti dei boid però in questo caso non vengono bloccati e ogni boid può continuare ad aggiornare la propria posizione indipendentemente dal fatto che avvenga o meno la scrittura su file (sono bloccati solo nel periodo di tempo in cui lo thread di scrittura sta scrivendo su file) . 
+Vi possono quindi essere delle perdite di aggiornamenti delle posizioni.
+Per accedere alla variante B:
+
+```bash
+ git checkout versionB
+```
+
+
+```bash
+ cd build 
+ make
+```
