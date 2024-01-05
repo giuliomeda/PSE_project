@@ -133,13 +133,15 @@ void boids_manager::check_for_new_neighbors(std::list<boid>& neighbors, int inde
     return;
 }
 
-void boids_manager::reynolds_algorithm(const std::list<boid>& neighbors, int index_of_boid)
+void boids_manager::reynolds_algorithm(std::list<boid>& neighbors, int index_of_boid)
 {
 
     std::unique_lock<std::mutex> mlock(mutex_);
     while (no_of_new_positions_to_write_.at(index_of_boid))
         new_update.wait(mlock);
-    
+        
+    //check for new neighbors       
+    check_for_new_neighbors(neighbors,index_of_boid);
     my_storm_.at(index_of_boid).update_speed(neighbors);
 
     no_of_new_positions_to_write_.at(index_of_boid) = true;

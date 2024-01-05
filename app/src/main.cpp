@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <atomic>
+#include <algorithm>
 #include<stdlib.h>
 using std::vector;
 using std::thread;
@@ -19,13 +21,6 @@ void handle_robot(int index_of_boid,int no_of_iteratation){
 
     while (number_update < no_of_iteratation){
 
-        //update list of neighbors, only if there're neighbors
-        /*if(!neighbors.empty())
-            manager.update_list_of_neighbors(neighbors,index_of_boid);*/
-        
-        //check for new neighbors 
-        manager.check_for_new_neighbors(neighbors,index_of_boid);        
-
         //apply the algorithm to the boid
         manager.reynolds_algorithm(neighbors,index_of_boid);
 
@@ -37,7 +32,7 @@ void handle_robot(int index_of_boid,int no_of_iteratation){
 
 void writer(int no_of_iteratation){
     int i{0};
-    while(i < no_of_iteratation){ 
+    while(i < no_of_iteratation ){ 
         manager.write_positions();
         i++;
     }
