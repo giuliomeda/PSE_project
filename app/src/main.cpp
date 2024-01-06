@@ -3,13 +3,11 @@
 #include <thread>
 #include <iostream>
 #include <vector>
-#include <list>
 #include<stdlib.h>
 #include<chrono>
 #include<atomic>
 using std::vector;
 using std::thread;
-using std::list;
 
 
 
@@ -18,7 +16,7 @@ std::atomic<bool> anyoneHasFinish{false};
 
 void handle_robot(int index_of_boid,int no_of_iteratation){
     int number_update{0};
-    std::list<boid> neighbors{};
+    std::vector<boid> neighbors{};
 
     while (number_update < no_of_iteratation && !anyoneHasFinish){       
 

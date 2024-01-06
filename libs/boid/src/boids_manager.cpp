@@ -107,7 +107,7 @@ void boids_manager::write_positions()
     return;
 }
 
-void boids_manager::update_list_of_neighbors(std::list<boid>& neighbors, int index_of_boid)
+void boids_manager::update_list_of_neighbors(std::vector<boid>& neighbors, int index_of_boid)
 {
     for (auto it{neighbors.begin()}; it != neighbors.end(); it++)
     {
@@ -117,7 +117,7 @@ void boids_manager::update_list_of_neighbors(std::list<boid>& neighbors, int ind
     return;
 }
 
-void boids_manager::check_for_new_neighbors(std::list<boid>& neighbors, int index_of_boid)
+void boids_manager::check_for_new_neighbors(std::vector<boid>& neighbors, int index_of_boid)
 {
     neighbors.clear();
     for (const auto &el : my_storm_)
@@ -128,7 +128,7 @@ void boids_manager::check_for_new_neighbors(std::list<boid>& neighbors, int inde
     return;
 }
 
-void boids_manager::reynolds_algorithm(std::list<boid>& neighbors, int index_of_boid)
+void boids_manager::reynolds_algorithm(std::vector<boid>& neighbors, int index_of_boid)
 {
 
     std::unique_lock<std::mutex> mlock(mutex_);
