@@ -100,7 +100,7 @@ float boid::distance_from_other_boid(const boid& other_boid)
 
 }
 
-void boid::separation(const std::list<boid>& neighbors)
+void boid::separation(const std::vector<boid>& neighbors)
 {
     if(neighbors.empty()) //if there are no neighbors, return..
         return;
@@ -124,7 +124,7 @@ void boid::separation(const std::list<boid>& neighbors)
     return;
 }
 
-void boid::alignement(const std::list<boid>& neighbors)
+void boid::alignement(const std::vector<boid>& neighbors)
 {
     if(neighbors.empty()) //if there are not neighbors, return..
         return;
@@ -152,7 +152,7 @@ void boid::alignement(const std::list<boid>& neighbors)
     return;
 }
 
-void boid::cohesion(const std::list<boid>& neighbors)
+void boid::cohesion(const std::vector<boid>& neighbors)
 {
     if(neighbors.empty()) //if there are not neighbors, return..
         return;
@@ -197,7 +197,7 @@ void boid::speed_limits()
 
 }
 
-void boid::update_speed(const std::list<boid>& neighbors)
+void boid::update_speed(const std::vector<boid>& neighbors)
 {
     separation(neighbors);
     alignement(neighbors);

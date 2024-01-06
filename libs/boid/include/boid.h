@@ -42,9 +42,9 @@ private:
     void initialize_at_random_positon();
     void initialize_at_random_speed();
     void check_screen_margins();
-    void separation(const std::list<boid>& neighbors);
-    void alignement(const std::list<boid>& neighbors);
-    void cohesion(const std::list<boid>& neighbors);
+    void separation(const std::vector<boid>& neighbors);
+    void alignement(const std::vector<boid>& neighbors);
+    void cohesion(const std::vector<boid>& neighbors);
     void speed_limits();
     
 
@@ -60,7 +60,7 @@ public:
     float get_vel_y_() const {return vel_y_;}
     size_t get_boid_id_() const {return boid_id_;}
 
-    void update_speed(const std::list<boid>& neighbors);
+    void update_speed(const std::vector<boid>& neighbors);
     void update_position();
     float distance_from_other_boid(const boid& other_boid);
 

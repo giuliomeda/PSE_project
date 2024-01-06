@@ -22,13 +22,13 @@ public:
     boids_manager(const std::string& filename);
     boids_manager(const std::string& filename, size_t storm_size);
     void write_positions();
-    void reynolds_algorithm(std::list<boid>& neighbors, int index_of_boid);
+    void reynolds_algorithm(std::vector<boid>& neighbors, int index_of_boid);
     void initialize_storm(size_t storm_size);
     int get_storm_size() const {return my_storm_.size();}
 private:
     void initialize_output_file(const std::string& filename);
-    void update_list_of_neighbors(std::list<boid>& neighbors, int index_of_boid);
-    void check_for_new_neighbors(std::list<boid>& neighbors, int index_of_boid);
+    void update_list_of_neighbors(std::vector<boid>& neighbors, int index_of_boid);
+    void check_for_new_neighbors(std::vector<boid>& neighbors, int index_of_boid);
     
 };
 
