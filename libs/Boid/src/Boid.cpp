@@ -1,22 +1,22 @@
-#include "boid.h"
+#include "Boid.h"
 
 //initialize the static members
-const int boid::left_margin_ {0};
-const int boid::right_margin_{1920};
-const int boid::top_margin_{1080};
-const int boid::bottom_margin_{0};
-const float boid::v_min_{25};
-const float boid::v_max_{100};
-const float boid::d_sep_{20};
-const float boid::d_ca_{500};
-const float boid::turn_factor_{10};
-const float boid::avoid_factor{10};
-const float boid::centering_factor{0.1};
-const float boid::align_factor{0.85};
-size_t boid::num_of_instantiated_boid{0};
+const int Boid::left_margin_ {0};
+const int Boid::right_margin_{1920};
+const int Boid::top_margin_{1080};
+const int Boid::bottom_margin_{0};
+const float Boid::v_min_{25};
+const float Boid::v_max_{100};
+const float Boid::d_sep_{20};
+const float Boid::d_ca_{500};
+const float Boid::turn_factor_{10};
+const float Boid::avoid_factor{10};
+const float Boid::centering_factor{0.1};
+const float Boid::align_factor{0.85};
+size_t Boid::num_of_instantiated_boid{0};
 
 
-boid::boid(float pos_x, float pos_y, float vel_x, float vel_y)
+Boid::Boid(float pos_x, float pos_y, float vel_x, float vel_y)
     : pos_x_{pos_x}, pos_y_{pos_y}, vel_x_{vel_x}, vel_y_{vel_y}
 {
     //check initial position given by the user
@@ -37,7 +37,7 @@ boid::boid(float pos_x, float pos_y, float vel_x, float vel_y)
     
 }
 
-boid::boid()
+Boid::Boid()
     :pos_x_{0}, pos_y_{0},vel_x_{0},vel_y_{0}
 {
     //il boid viene istanziato in un punto casuale e a vel casuale
@@ -49,7 +49,7 @@ boid::boid()
     return;
 }
 
-void boid::initialize_at_random_positon()
+void Boid::initialize_at_random_positon()
 {
     std::random_device rd;
     std::mt19937 generator(rd());
@@ -62,7 +62,7 @@ void boid::initialize_at_random_positon()
     return;
 }
 
-void boid::initialize_at_random_speed()
+void Boid::initialize_at_random_speed()
 {
     std::random_device rd;
     std::mt19937 generator(rd());
@@ -75,7 +75,7 @@ void boid::initialize_at_random_speed()
     return;
 }
 
-void boid::check_screen_margins()
+void Boid::check_screen_margins()
 {
     if (pos_x_ < left_margin_)
         vel_x_ += turn_factor_;
@@ -90,7 +90,7 @@ void boid::check_screen_margins()
 
 }
 
-float boid::distance_from_other_boid(const boid& other_boid)
+float Boid::distance_from_other_boid(const Boid& other_boid)
 {
     double distance_in_x {std::pow((pos_x_ - other_boid.get_pos_x_()),2)};
     double distance_in_y {std::pow((pos_y_ - other_boid.get_pos_y_()),2)};
@@ -100,7 +100,7 @@ float boid::distance_from_other_boid(const boid& other_boid)
 
 }
 
-void boid::separation(const std::vector<boid>& neighbors)
+void Boid::separation(const std::vector<Boid>& neighbors)
 {
     if(neighbors.empty()) //if there are no neighbors, return..
         return;
@@ -108,9 +108,9 @@ void boid::separation(const std::vector<boid>& neighbors)
     float close_dx{0};
     float close_dy{0};
 
-    for (const boid &el : neighbors)
+    for (const Boid &el : neighbors)
     {
-        if (distance_from_other_boid(el) < boid::d_sep_)
+        if (distance_from_other_boid(el) < Boid::d_sep_)
         {
             close_dx += pos_x_ - el.get_pos_x_();
             close_dy += pos_y_ - el.get_pos_y_();
@@ -118,13 +118,13 @@ void boid::separation(const std::vector<boid>& neighbors)
     }
 
     //update speed for separation
-    vel_x_ += close_dx * boid::avoid_factor;
-    vel_y_ += close_dy * boid::avoid_factor;
+    vel_x_ += close_dx * Boid::avoid_factor;
+    vel_y_ += close_dy * Boid::avoid_factor;
 
     return;
 }
 
-void boid::alignement(const std::vector<boid>& neighbors)
+void Boid::alignement(const std::vector<Boid>& neighbors)
 {
     if(neighbors.empty()) //if there are not neighbors, return..
         return;
@@ -135,7 +135,7 @@ void boid::alignement(const std::vector<boid>& neighbors)
 
     
 
-    for(const boid& el:neighbors){
+    for(const Boid& el:neighbors){
         x_vel_avg += el.get_vel_x_();
         y_vel_avg += el.get_vel_y_();
     }
@@ -146,13 +146,13 @@ void boid::alignement(const std::vector<boid>& neighbors)
     else return;
 
     //update speed
-    vel_x_ += (x_vel_avg - vel_x_) * boid::align_factor;
-    vel_y_ += (y_vel_avg - vel_y_) * boid::align_factor;
+    vel_x_ += (x_vel_avg - vel_x_) * Boid::align_factor;
+    vel_y_ += (y_vel_avg - vel_y_) * Boid::align_factor;
 
     return;
 }
 
-void boid::cohesion(const std::vector<boid>& neighbors)
+void Boid::cohesion(const std::vector<Boid>& neighbors)
 {
     if(neighbors.empty()) //if there are not neighbors, return..
         return;
@@ -163,7 +163,7 @@ void boid::cohesion(const std::vector<boid>& neighbors)
 
     
     
-    for(const boid& el:neighbors){
+    for(const Boid& el:neighbors){
         x_pos_avg += el.get_pos_x_();
         y_pos_avg += el.get_pos_y_();
     }
@@ -174,30 +174,30 @@ void boid::cohesion(const std::vector<boid>& neighbors)
     else return;
 
     //update speed
-    vel_x_ += (x_pos_avg - pos_x_) * boid::centering_factor;
-    vel_y_ += (y_pos_avg - pos_y_) * boid::centering_factor;
+    vel_x_ += (x_pos_avg - pos_x_) * Boid::centering_factor;
+    vel_y_ += (y_pos_avg - pos_y_) * Boid::centering_factor;
 
 }
 
-void boid::speed_limits()
+void Boid::speed_limits()
 {
     double speed {std::sqrt(vel_x_ * vel_x_ + vel_y_ * vel_y_)};
 
-    if (speed > boid::v_max_){
-        vel_x_ = (vel_x_ / speed) * boid::v_max_;
-        vel_y_ = (vel_y_ / speed) * boid::v_max_;
+    if (speed > Boid::v_max_){
+        vel_x_ = (vel_x_ / speed) * Boid::v_max_;
+        vel_y_ = (vel_y_ / speed) * Boid::v_max_;
     }
 
-    if (speed < boid::v_min_){
-        vel_x_ = (vel_x_ / speed) * boid::v_min_;
-        vel_y_ = (vel_y_ / speed) * boid::v_min_;
+    if (speed < Boid::v_min_){
+        vel_x_ = (vel_x_ / speed) * Boid::v_min_;
+        vel_y_ = (vel_y_ / speed) * Boid::v_min_;
     }
 
     return;
 
 }
 
-void boid::update_speed(const std::vector<boid>& neighbors)
+void Boid::update_speed(const std::vector<Boid>& neighbors)
 {
     separation(neighbors);
     alignement(neighbors);
@@ -208,7 +208,7 @@ void boid::update_speed(const std::vector<boid>& neighbors)
     return;
 }
 
-void boid::update_position()
+void Boid::update_position()
 {
     pos_x_ = pos_x_ + vel_x_;
     pos_y_ = pos_y_ + vel_y_;

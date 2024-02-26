@@ -1,5 +1,5 @@
-#include "boid.h"
-#include "boids_manager.h"
+#include "Boid.h"
+#include "Boids_manager.h"
 #include <thread>
 #include <iostream>
 #include <vector>
@@ -11,30 +11,25 @@ using std::thread;
 
 
 
-boids_manager manager{"../visualizer/my_coordinates.txt"};
+Boids_manager manager{"../visualizer/my_coordinates.txt"};
 
+// threads for the robots routine
 void handle_robot(int index_of_boid,int no_of_iteratation){
-    int number_update{0};
-    std::vector<boid> neighbors{};
 
-    while (number_update < no_of_iteratation){
+    std::vector<Boid> neighbors{};
+
+    for (int number_update{0}; number_update < no_of_iteratation; number_update++){
 
         //apply the algorithm to the boid
         manager.reynolds_algorithm(neighbors,index_of_boid);
-
-        number_update ++;
     }
-
-    return;
 }
 
+// thread for write the output file
 void writer(int no_of_iteratation){
-    int i{0};
-    while(i < no_of_iteratation ){ 
+    for(int i{0}; i < no_of_iteratation; i++ ){ 
         manager.write_positions();
-        i++;
     }
-    return;
 }
 
 

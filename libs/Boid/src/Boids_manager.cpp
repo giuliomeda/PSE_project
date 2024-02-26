@@ -1,17 +1,17 @@
-#include "boids_manager.h"
+#include "Boids_manager.h"
 #include<algorithm>
 #include<filesystem>
 #include<fstream>
 
-boids_manager::boids_manager(const std::string& filename)
-    :filename_{filename}
+Boids_manager::Boids_manager(const std::string& filename)
+    :filename_{filename}, my_storm_{}
 {
     initialize_output_file(filename_);
     return;
 }
 
-boids_manager::boids_manager(const std::string& filename, size_t storm_size)
-    :filename_{filename}
+Boids_manager::Boids_manager(const std::string& filename, size_t storm_size)
+    :filename_{filename}, my_storm_{}
 {
     //initialize the storm 
     initialize_storm(storm_size);
@@ -21,14 +21,14 @@ boids_manager::boids_manager(const std::string& filename, size_t storm_size)
     return;
 }
 
-void boids_manager::initialize_output_file(const std::string & filename)
+void Boids_manager::initialize_output_file(const std::string & filename)
 {
     std::ofstream myfile;
     if(!std::filesystem::exists(filename)){
         myfile.open(filename, std::ios::app);
 
         if(myfile.is_open()){
-                myfile << boid::left_margin_ << " " << boid::right_margin_ << " " << boid::bottom_margin_ << " " << boid::top_margin_ << "\n";
+                myfile << Boid::left_margin_ << " " << Boid::right_margin_ << " " << Boid::bottom_margin_ << " " << Boid::top_margin_ << "\n";
                 myfile.close();
             }
             else{
@@ -42,7 +42,7 @@ void boids_manager::initialize_output_file(const std::string & filename)
         myfile.open(filename, std::ios::trunc);
 
         if(myfile.is_open()){
-                myfile << boid::left_margin_ << " " << boid::right_margin_ << " " << boid::bottom_margin_ << " " << boid::top_margin_ << "\n";
+                myfile << Boid::left_margin_ << " " << Boid::right_margin_ << " " << Boid::bottom_margin_ << " " << Boid::top_margin_ << "\n";
                 myfile.close();
             }
             else{
@@ -55,7 +55,7 @@ void boids_manager::initialize_output_file(const std::string & filename)
 
 }
 
-void boids_manager::initialize_storm(size_t storm_size)
+void Boids_manager::initialize_storm(size_t storm_size)
 {
     if (storm_size == 0 ){
         std::cerr << "Invalid storm size...\n\n";
@@ -64,7 +64,7 @@ void boids_manager::initialize_storm(size_t storm_size)
 
     for(size_t i{0}; i < storm_size; i++){
         //populate the storm with random boid
-        boid new_boid{};
+        Boid new_boid{};
         my_storm_.push_back(new_boid);
         no_of_new_positions_to_write_.push_back(false);
     }
@@ -72,7 +72,7 @@ void boids_manager::initialize_storm(size_t storm_size)
     return;
 }
 
-void boids_manager::write_positions()
+void Boids_manager::write_positions()
 {
     std::unique_lock<std::mutex> mlock(mutex_);
     std::ofstream my_file;
@@ -112,28 +112,28 @@ void boids_manager::write_positions()
     return;
 }
 
-void boids_manager::update_list_of_neighbors(std::vector<boid>& neighbors, int index_of_boid)
+void Boids_manager::update_list_of_neighbors(std::vector<Boid>& neighbors, int index_of_boid)
 {
     for (auto it{neighbors.begin()}; it != neighbors.end(); it++)
     {
-        if (my_storm_.at(index_of_boid).distance_from_other_boid(*it) > boid::d_ca_)
+        if (my_storm_.at(index_of_boid).distance_from_other_boid(*it) > Boid::d_ca_)
             it = neighbors.erase(it);
     }
     return;
 }
 
-void boids_manager::check_for_new_neighbors(std::vector<boid>& neighbors, int index_of_boid)
+void Boids_manager::check_for_new_neighbors(std::vector<Boid>& neighbors, int index_of_boid)
 {
     neighbors.clear();
     for (const auto &el : my_storm_)
     {
-        if ((my_storm_.at(index_of_boid).distance_from_other_boid(el) <= boid::d_ca_) && (my_storm_.at(index_of_boid).get_boid_id_() != el.get_boid_id_()) )
+        if ((my_storm_.at(index_of_boid).distance_from_other_boid(el) <= Boid::d_ca_) && (my_storm_.at(index_of_boid).get_boid_id_() != el.get_boid_id_()) )
             neighbors.push_back(el);
     }
     return;
 }
 
-void boids_manager::reynolds_algorithm(std::vector<boid>& neighbors, int index_of_boid)
+void Boids_manager::reynolds_algorithm(std::vector<Boid>& neighbors, int index_of_boid)
 {
 
     std::unique_lock<std::mutex> mlock(mutex_);

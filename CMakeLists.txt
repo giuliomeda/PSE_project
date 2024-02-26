@@ -4,6 +4,6 @@ project(homework
         DESCRIPTION "homework PSE 23-24")
 
 # Create targets for building the (local) libraries.
-add_subdirectory(libs/boid)
+add_subdirectory(libs/Boid)
 # Create the targets for the entire example-app.
 add_subdirectory( app )
