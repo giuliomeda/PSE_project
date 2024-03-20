@@ -18,10 +18,12 @@ class writer_thread
 {
 public:
     void operator()(int no_of_iteration){
-        for(int i{0}; i <no_of_iteration; i++){
-            manager.write_positions();
+        while(!haveToStop){
+            manager.write_positions(this->haveToStop, no_of_iteration);
         }
     }
+private:
+    bool haveToStop{false};
 };
 
 
