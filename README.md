@@ -72,21 +72,3 @@ Se versione 2, passare a wsl, dal terminale linux:
 
 (The package installer for Python)
 
-## Versione B 
-All'interno del branch "versionB" è implementata una variante della parte concorrente del programma. 
-
-Nel BRANCH MAIN è implementata una versione in cui la thread di scrittura scrive su file quando tutti i boid hanno aggiornato esattamente una sola volta la loro posizione. Ogni boid quando ha aggiornato la posizione si blocca e aspetta che avvenga la scrittura; una volta terminata la fase di scrittura i boid vengono svegliati e possono procedere con un nuovo aggiornamento. Così facendo non si perde alcuna posizione e tutti i boid vengono aggiornati lo stesso numero di volte.
-
-All'interno del branch versionB invece è implementata une versione in cui la thread che si occupa della scrittura scrive su file quando tutti i boid hanno aggiornato la propria posizione ALMENO una volta rispetto all'ultima posizione scritta. Gli aggiornamenti dei boid però in questo caso non vengono bloccati e ogni boid può continuare ad aggiornare la propria posizione indipendentemente dal fatto che avvenga o meno la scrittura su file (sono bloccati solo nel periodo di tempo in cui lo thread di scrittura sta scrivendo su file) . 
-Vi possono quindi essere delle perdite di aggiornamenti delle posizioni.
-Per accedere alla variante B:
-
-```bash
- git checkout versionB
-```
-
-
-```bash
- cd build 
- make
-```
