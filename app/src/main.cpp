@@ -13,24 +13,34 @@ using std::thread;
 
 Boids_manager manager{"../visualizer/my_coordinates.txt"};
 
-// threads for the robots routine
-void handle_robot(int index_of_boid,int no_of_iteratation){
+//class for the writer thread 
+class writer_thread
+{
+public:
+    void operator()(int no_of_iteration){
+        while(!haveToStop){
+            manager.write_positions(this->haveToStop, no_of_iteration);
+        }
+    }
+private:
+    bool haveToStop{false};
+};
 
+
+//class for the robot threads 
+class robot_thread
+{
+private:
     std::vector<Boid> neighbors{};
 
-    for (int number_update{0}; number_update < no_of_iteratation; number_update++){
-
-        //apply the algorithm to the boid
-        manager.reynolds_algorithm(neighbors,index_of_boid);
+public:    
+    void operator()(int index_of_boid, int no_of_iteration){
+        for (int number_update{0}; number_update < no_of_iteration; number_update++){
+            //apply the algorithm to the boid
+            manager.reynolds_algorithm(neighbors,index_of_boid);
+        }
     }
-}
-
-// thread for write the output file
-void writer(int no_of_iteratation){
-    for(int i{0}; i < no_of_iteratation; i++ ){ 
-        manager.write_positions();
-    }
-}
+};
 
 
 
@@ -48,7 +58,7 @@ int main(){
     }
 
 
-    std::cout << "\nInsert the number of iterations that you want to compute: ";
+    std::cout << "\nInsert the number of iterations you want to compute: ";
     std::cin >> no_of_iteratation;
     if(no_of_iteratation <= 0){
         std::cerr << "Number of iterations must be > 0\n";
@@ -65,17 +75,17 @@ int main(){
     vector<thread> threads;
     for (size_t i{0}; i < manager.get_storm_size(); i++){
 
-        threads.push_back(thread{handle_robot,static_cast<int>(i), no_of_iteratation});
+        threads.push_back(thread{robot_thread(),static_cast<int>(i), no_of_iteratation});
 
     }
     
-    thread file_writer{writer,no_of_iteratation};
+    thread writer{writer_thread(),no_of_iteratation};
 
     for (auto el{threads.begin()}; el != threads.end(); el++){
         el->join();
     }
 
-    file_writer.join();
+    writer.join();
 
     //launch Visualizer.py
     system("python3 ../visualizer/Visualizer.py");

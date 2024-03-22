@@ -4,14 +4,14 @@
 #include<fstream>
 
 Boids_manager::Boids_manager(const std::string& filename)
-    :filename_{filename}, my_storm_{}
+    :my_storm_{}, no_of_new_positions_to_write_{},filename_{filename}
 {
     initialize_output_file(filename_);
     return;
 }
 
 Boids_manager::Boids_manager(const std::string& filename, size_t storm_size)
-    :filename_{filename}, my_storm_{}
+    :my_storm_{}, no_of_new_positions_to_write_{},filename_{filename}
 {
     //initialize the storm 
     initialize_storm(storm_size);
@@ -72,14 +72,32 @@ void Boids_manager::initialize_storm(size_t storm_size)
     return;
 }
 
-void Boids_manager::write_positions()
+void Boids_manager::write_positions(bool& stop_the_writer_thread, int no_of_iterations)
 {
     std::unique_lock<std::mutex> mlock(mutex_);
     std::ofstream my_file;
 
-    while (!std::all_of(no_of_new_positions_to_write_.begin(), no_of_new_positions_to_write_.end(), [](int a)
-                        { return a; }))
-        OkToWrite.wait(mlock);
+    while (!std::all_of(no_of_new_positions_to_write_.begin(), no_of_new_positions_to_write_.end(), [](int a){ return a; })){
+
+        auto cv_status = OkToWrite.wait_for(mlock, this->max_waiting_time);
+
+        //check the status of the condition variable
+        if(cv_status == std::cv_status::timeout){
+            size_t dim = open_output_file_and_check_number_of_positions_printed_out();
+
+            if(dim == no_of_iterations + 1){
+                stop_the_writer_thread = true;
+                return;
+            }
+            else{
+                std::cerr << "Error, no data available for the writer thread\n\n";
+                mlock.unlock();
+                exit(EXIT_FAILURE);
+            }
+        }           
+                        
+    }
+    
 
     //update positions using updated speeds
     for (auto& el:my_storm_){
@@ -131,6 +149,27 @@ void Boids_manager::check_for_new_neighbors(std::vector<Boid>& neighbors, int in
             neighbors.push_back(el);
     }
     return;
+}
+
+int Boids_manager::open_output_file_and_check_number_of_positions_printed_out()
+{
+    std::ifstream my_file;
+
+    my_file.open(filename_, std::ios::in); // open the file in read-only mode
+    if (my_file.is_open())
+    {
+        std::string line{};
+        size_t number_of_lines{0};
+
+        while(std::getline(my_file, line))
+            number_of_lines++;
+        my_file.close();
+        return number_of_lines;
+    }
+    else{
+        std::cerr << "Error occurred during the reading of the output file\n";
+        exit(EXIT_FAILURE);
+    }
 }
 
 void Boids_manager::reynolds_algorithm(std::vector<Boid>& neighbors, int index_of_boid)
