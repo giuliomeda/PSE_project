@@ -14,7 +14,7 @@ class Boids_manager
 public:
     Boids_manager(const std::string& filename);
     Boids_manager(const std::string& filename, size_t storm_size);
-    void write_positions(bool& stop_the_writer_thread, int no_of_iterations);
+    bool write_positions(bool& stop_the_writer_thread, int no_of_iterations);
     void reynolds_algorithm(std::vector<Boid>& neighbors, int index_of_boid);
     void initialize_storm(size_t storm_size);
     int get_storm_size() const {return my_storm_.size();}
@@ -27,7 +27,7 @@ private:
     std::mutex mutex_;
     std::condition_variable OkToWrite;
     std::condition_variable new_update;
-    const std::chrono::seconds max_waiting_time{3}; //[seconds], max waiting time for the writer thread, in seconds
+    const std::chrono::milliseconds max_waiting_time{3}; //[seconds], max waiting time for the writer thread, in seconds
 
     void initialize_output_file(const std::string& filename);
     void update_list_of_neighbors(std::vector<Boid>& neighbors, int index_of_boid);

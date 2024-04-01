@@ -72,7 +72,7 @@ void Boids_manager::initialize_storm(size_t storm_size)
     return;
 }
 
-void Boids_manager::write_positions(bool& stop_the_writer_thread, int no_of_iterations)
+bool Boids_manager::write_positions(bool& stop_the_writer_thread, int no_of_iterations)
 {
     std::unique_lock<std::mutex> mlock(mutex_);
     std::ofstream my_file;
@@ -87,12 +87,12 @@ void Boids_manager::write_positions(bool& stop_the_writer_thread, int no_of_iter
 
             if(dim == no_of_iterations + 1){
                 stop_the_writer_thread = true;
-                return;
+                return true;
             }
             else{
-                std::cerr << "Error, no data available for the writer thread\n\n";
+                std::cerr << "Error, no data available, writer thread is exiting...\n\n";
                 mlock.unlock();
-                exit(EXIT_FAILURE);
+                return false;
             }
         }           
                         
@@ -127,7 +127,7 @@ void Boids_manager::write_positions(bool& stop_the_writer_thread, int no_of_iter
     new_update.notify_all();
   
 
-    return;
+    return true;
 }
 
 void Boids_manager::update_list_of_neighbors(std::vector<Boid>& neighbors, int index_of_boid)
@@ -176,9 +176,14 @@ void Boids_manager::reynolds_algorithm(std::vector<Boid>& neighbors, int index_o
 {
 
     std::unique_lock<std::mutex> mlock(mutex_);
-    while (no_of_new_positions_to_write_.at(index_of_boid))
-        new_update.wait(mlock);
-        
+    while (no_of_new_positions_to_write_.at(index_of_boid)){
+        auto cv_status = new_update.wait_for(mlock,std::chrono::seconds(1));
+        if(cv_status == std::cv_status::timeout){
+            //std::cerr << "Timeout error, robot thread is exting..." << std::endl;
+            return;
+        }
+    }
+    
     //check for new neighbors       
     check_for_new_neighbors(neighbors,index_of_boid);
     my_storm_.at(index_of_boid).update_speed(neighbors);

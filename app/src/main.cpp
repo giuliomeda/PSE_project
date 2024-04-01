@@ -12,14 +12,16 @@ using std::thread;
 
 
 Boids_manager manager{"../visualizer/my_coordinates.txt"};
+std::atomic<bool> error_flag{false};
 
 //class for the writer thread 
 class writer_thread
 {
 public:
     void operator()(int no_of_iteration){
-        while(!haveToStop){
-            manager.write_positions(this->haveToStop, no_of_iteration);
+        while(!haveToStop && !error_flag){
+            if(!manager.write_positions(this->haveToStop, no_of_iteration))
+                error_flag = true;
         }
     }
 private:
@@ -35,9 +37,11 @@ private:
 
 public:    
     void operator()(int index_of_boid, int no_of_iteration){
-        for (int number_update{0}; number_update < no_of_iteration; number_update++){
+        int iterations_done{0};
+        while(!error_flag && iterations_done<no_of_iteration){
             //apply the algorithm to the boid
             manager.reynolds_algorithm(neighbors,index_of_boid);
+            iterations_done++;
         }
     }
 };
@@ -88,7 +92,8 @@ int main(){
     writer.join();
 
     //launch Visualizer.py
-    system("python3 ../visualizer/Visualizer.py");
+    if(!error_flag)
+        system("python3 ../visualizer/Visualizer.py");
 
     return 0;    
 
