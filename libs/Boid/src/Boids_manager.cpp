@@ -79,7 +79,7 @@ bool Boids_manager::write_positions(bool& stop_the_writer_thread, int no_of_iter
 
     while (!std::all_of(no_of_new_positions_to_write_.begin(), no_of_new_positions_to_write_.end(), [](int a){ return a; })){
 
-        auto cv_status = OkToWrite.wait_for(mlock, this->max_waiting_time);
+        auto cv_status = OkToWrite.wait_for(mlock, writer_max_waiting_time);
 
         //check the status of the condition variable
         if(cv_status == std::cv_status::timeout){
@@ -177,7 +177,7 @@ void Boids_manager::reynolds_algorithm(std::vector<Boid>& neighbors, int index_o
 
     std::unique_lock<std::mutex> mlock(mutex_);
     while (no_of_new_positions_to_write_.at(index_of_boid)){
-        auto cv_status = new_update.wait_for(mlock,std::chrono::seconds(1));
+        auto cv_status = new_update.wait_for(mlock,robot_max_waiting_time);
         if(cv_status == std::cv_status::timeout){
             //std::cerr << "Timeout error, robot thread is exting..." << std::endl;
             return;

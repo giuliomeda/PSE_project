@@ -27,7 +27,8 @@ private:
     std::mutex mutex_;
     std::condition_variable OkToWrite;
     std::condition_variable new_update;
-    const std::chrono::milliseconds max_waiting_time{3}; //[seconds], max waiting time for the writer thread, in seconds
+    const std::chrono::seconds writer_max_waiting_time{3}; //[seconds], max waiting time for the writer thread, in seconds
+    const std::chrono::seconds robot_max_waiting_time{3}; //[seconds], max waiting time for the robot thread, in seconds
 
     void initialize_output_file(const std::string& filename);
     void update_list_of_neighbors(std::vector<Boid>& neighbors, int index_of_boid);
